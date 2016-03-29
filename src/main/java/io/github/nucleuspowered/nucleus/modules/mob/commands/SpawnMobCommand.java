@@ -11,6 +11,7 @@ import io.github.nucleuspowered.nucleus.argumentparsers.PositiveIntegerArgument;
 import io.github.nucleuspowered.nucleus.argumentparsers.SelectorWrapperArgument;
 import io.github.nucleuspowered.nucleus.internal.annotations.Permissions;
 import io.github.nucleuspowered.nucleus.internal.annotations.RegisterCommand;
+import io.github.nucleuspowered.nucleus.internal.command.AbstractCommand;
 import io.github.nucleuspowered.nucleus.internal.permissions.PermissionInformation;
 import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
 import io.github.nucleuspowered.nucleus.modules.mob.config.MobConfigAdapter;
@@ -38,7 +39,7 @@ import java.util.Optional;
 
 @Permissions(supportsSelectors = true)
 @RegisterCommand({"spawnmob", "spawnentity"})
-public class SpawnMobCommand extends io.github.nucleuspowered.nucleus.internal.command.AbstractCommand<CommandSource> {
+public class SpawnMobCommand extends AbstractCommand<CommandSource> {
 
     private final String playerKey = "player";
     private final String amountKey = "amount";
@@ -77,7 +78,7 @@ public class SpawnMobCommand extends io.github.nucleuspowered.nucleus.internal.c
         EntityType et = args.<EntityType>getOne(mobTypeKey).get();
 
         if (!Living.class.isAssignableFrom(et.getEntityClass())) {
-            src.sendMessage(plugin.getMessageProvider().getTextMessageWithFormat("command.spawnmob.livingonly", et.getTranslation().get()));
+            src.sendMessage(plugin.getMessageProvider().getTextMessageWithFormat("args.entityparser.livingonly", et.getTranslation().get()));
             return CommandResult.empty();
         }
 
