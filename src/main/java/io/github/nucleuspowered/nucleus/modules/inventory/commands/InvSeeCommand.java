@@ -19,6 +19,9 @@ import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
+import org.spongepowered.api.item.inventory.Inventory;
+import org.spongepowered.api.item.inventory.entity.Hotbar;
+import org.spongepowered.api.item.inventory.type.GridInventory;
 import org.spongepowered.api.text.Text;
 
 import java.util.Map;
@@ -60,7 +63,8 @@ public class InvSeeCommand extends AbstractCommand<Player> {
             throw new ReturnMessageException(plugin.getMessageProvider().getTextMessageWithFormat("command.invsee.targetexempt", target.getName()));
         }
 
-        src.openInventory(target.getInventory(), Cause.of(NamedCause.of("plugin", plugin), NamedCause.source(src)));
+        Inventory i = target.getInventory().query(GridInventory.class, Hotbar.class);
+        src.openInventory(i, Cause.of(NamedCause.of("plugin", plugin), NamedCause.source(src)));
         return CommandResult.success();
     }
 }
