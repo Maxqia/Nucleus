@@ -6,7 +6,11 @@ package io.github.nucleuspowered.nucleus.internal.annotations;
 
 import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Specifies multiple permissions that this command could use. Be sure that no permissions have been set in the
@@ -59,6 +63,13 @@ public @interface Permissions {
      * @return {@code true} if so.
      */
     boolean supportsSelectors() default false;
+
+    /**
+     * If {@code true}, specifies that targetting other player permissions should be generated. Purely for documentation.
+     *
+     * @return {@code true} if so.
+     */
+    boolean supportsOthers() default false;
 
     /**
      * The suggested permission level.

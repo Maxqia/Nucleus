@@ -30,6 +30,7 @@ public class CommandPermissionHandler {
     private final String cooldown;
     private final String cost;
     private final String selectors;
+    private final String others;
 
     private final boolean justReturnTrue;
 
@@ -44,6 +45,7 @@ public class CommandPermissionHandler {
             cooldown = "";
             cost = "";
             selectors = "";
+            others = "";
             return;
         }
 
@@ -72,6 +74,10 @@ public class CommandPermissionHandler {
 
                 @Override
                 public boolean supportsSelectors() {
+                    return false;
+                }
+
+                @Override public boolean supportsOthers() {
                     return false;
                 }
 
@@ -120,9 +126,14 @@ public class CommandPermissionHandler {
             mssl.put(selectors, new PermissionInformation(plugin.getMessageProvider().getMessageWithFormat("permission.selector", command), c.suggestedLevel()));
         }
 
+        if (c.supportsOthers()) {
+            mssl.put("others", new PermissionInformation(plugin.getMessageProvider().getMessageWithFormat("permission.others", co.value()[0]), SuggestedLevel.ADMIN));
+        }
+
         warmup = prefix + "exempt.warmup";
         cooldown = prefix + "exempt.cooldown";
         cost = prefix + "exempt.cost";
+        others = prefix + "others";
 
         if (!cab.isAnnotationPresent(NoWarmup.class)) {
             mssl.put(warmup, new PermissionInformation(plugin.getMessageProvider().getMessageWithFormat("permission.exempt.warmup", command), SuggestedLevel.ADMIN));
@@ -147,6 +158,10 @@ public class CommandPermissionHandler {
         return base;
     }
 
+    public String getOthers() {
+        return others;
+    }
+
     public boolean testBase(Subject src) {
         return test(src, base);
     }
@@ -165,6 +180,10 @@ public class CommandPermissionHandler {
 
     public boolean testSelectors(Subject src) {
         return test(src, selectors);
+    }
+
+    public boolean testOthers(Subject src) {
+        return test(src, others);
     }
 
     public void registerPermssionSuffix(String suffix, PermissionInformation pi) {
