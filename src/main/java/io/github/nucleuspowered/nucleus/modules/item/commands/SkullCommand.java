@@ -6,7 +6,11 @@ package io.github.nucleuspowered.nucleus.modules.item.commands;
 
 import com.google.common.collect.Lists;
 import io.github.nucleuspowered.nucleus.argumentparsers.PositiveIntegerArgument;
-import io.github.nucleuspowered.nucleus.internal.annotations.*;
+import io.github.nucleuspowered.nucleus.internal.annotations.NoCooldown;
+import io.github.nucleuspowered.nucleus.internal.annotations.NoCost;
+import io.github.nucleuspowered.nucleus.internal.annotations.NoWarmup;
+import io.github.nucleuspowered.nucleus.internal.annotations.Permissions;
+import io.github.nucleuspowered.nucleus.internal.annotations.RegisterCommand;
 import io.github.nucleuspowered.nucleus.internal.command.AbstractCommand;
 import io.github.nucleuspowered.nucleus.internal.permissions.PermissionInformation;
 import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
@@ -31,7 +35,6 @@ import org.spongepowered.api.text.Text;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RegisterCommand({"skull"})
@@ -63,11 +66,7 @@ public class SkullCommand extends AbstractCommand<Player> {
 
     @Override
     public CommandResult executeCommand(Player pl, CommandContext args) throws Exception {
-        Optional<User> opl = this.getUser(User.class, pl, player, args);
-        if (!opl.isPresent()) {
-            return CommandResult.empty();
-        }
-
+        User user = this.getUserFromArgs(User.class, pl, player, args);
         int amount = args.<Integer>getOne(amountKey).orElse(1);
 
         int fullStacks = amount / 64;
@@ -78,8 +77,8 @@ public class SkullCommand extends AbstractCommand<Player> {
 
         // Set it to player skull type and set the owner to the specified player
         if (skullStack.offer(Keys.SKULL_TYPE, SkullTypes.PLAYER).isSuccessful()
-                && skullStack.offer(Keys.REPRESENTED_PLAYER, opl.get().getProfile()).isSuccessful()) {
-            skullStack.toContainer().set(DataQuery.of("SkullOwner"), opl.get().getName());
+                && skullStack.offer(Keys.REPRESENTED_PLAYER, user.getProfile()).isSuccessful()) {
+            skullStack.toContainer().set(DataQuery.of("SkullOwner"), user.getName());
 
             List<ItemStack> itemStackList = Lists.newArrayList();
 
@@ -117,18 +116,18 @@ public class SkullCommand extends AbstractCommand<Player> {
                 }
 
                 if (accepted == 1) {
-                    pl.sendMessage(plugin.getMessageProvider().getTextMessageWithFormat("command.skull.success.single", opl.get().getName()));
+                    pl.sendMessage(plugin.getMessageProvider().getTextMessageWithFormat("command.skull.success.single", user.getName()));
                 } else {
-                    pl.sendMessage(plugin.getMessageProvider().getTextMessageWithFormat("command.skull.success.plural", String.valueOf(accepted), opl.get().getName()));
+                    pl.sendMessage(plugin.getMessageProvider().getTextMessageWithFormat("command.skull.success.plural", String.valueOf(accepted), user.getName()));
                 }
 
                 return CommandResult.success();
             }
 
-            pl.sendMessage(plugin.getMessageProvider().getTextMessageWithFormat("command.skull.full", opl.get().getName()));
+            pl.sendMessage(plugin.getMessageProvider().getTextMessageWithFormat("command.skull.full", user.getName()));
             return CommandResult.empty();
         } else {
-            pl.sendMessage(plugin.getMessageProvider().getTextMessageWithFormat("command.skull.error", opl.get().getName()));
+            pl.sendMessage(plugin.getMessageProvider().getTextMessageWithFormat("command.skull.error", user.getName()));
             return CommandResult.empty();
         }
     }
